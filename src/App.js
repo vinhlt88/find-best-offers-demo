@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import initOfferList from './offer_list.json';
-import { sortBy } from "lodash";
+import { filter, first, map, max, maxBy, sortBy, sumBy } from "lodash";
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -9,16 +9,16 @@ import Collapse from 'react-bootstrap/Collapse';
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
-  const [same_bank_weight, setsame_bank_weight] = useState(3.0);
+  const [same_bank_weight, setsame_bank_weight] = useState(0.5);
 
   const [online_or_auto_enabled, setonline_or_auto_enabled] = useState(true);
-  const [online_or_auto_weight, setonline_or_auto_weight] = useState(10);
+  const [online_or_auto_weight, setonline_or_auto_weight] = useState(100);
 
   const [least_total_amount_enabled, setleast_total_amount_enabled] = useState(true);
   const [least_total_amount_weight, setleast_total_amount_weight] = useState(0.1);
 
   const [trading_volume_portion_enabled, settrading_volume_portion_enabled] = useState(true);
-  const [trading_volume_portion_weight, settrading_volume_portion_weight] = useState(50);
+  const [trading_volume_portion_weight, settrading_volume_portion_weight] = useState(20);
 
   const [released_rate_enabled, setreleased_rate_enabled] = useState(true);
   const [released_rate_weight, setreleased_rate_weight] = useState(10);
@@ -96,7 +96,11 @@ function App() {
     const amount = 200000;
     const bank_name = "Vietcombank";
 
-    const availableOffer = offerList.filter(o => o.offer_type = offer_type && o.total_amount >= amount);
+    const availableOffer = offerList.filter(o => o.offer_type == offer_type && o.total_amount >= amount);
+    const total_amount_field =  offer_type == "sell" ? "effective_max_amount":  "total_amount";
+    const maxTotalAmount =  max(map(availableOffer, total_amount_field)) || 0;
+    const sum_vol_field = offer_type == "sell" ? "supported_deposit" : "supported_withdrawal";
+    const tradedVol = sumBy(filter(offerList, {"offer_type": offer_type}), sum_vol_field) || 0;
     availableOffer.forEach(offer => {
       if(same_bank_enabled){
         offer.same_bank_score = offer.bank_name == bank_name ? Number(same_bank_weight) : 0; 
@@ -106,13 +110,29 @@ function App() {
         offer.online_or_auto_score = offer.online_or_auto == "TRUE" ? Number(online_or_auto_weight) : 0; 
       }
 
-      let total_score = 0;
-      ["same_bank_score", "online_or_auto_score"].forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
+      if(least_total_amount_enabled){
+        offer.least_total_amount_score = maxTotalAmount == 0 ? 0 : -1 * Number(least_total_amount_weight) * offer[total_amount_field] / maxTotalAmount;
+      }
 
-      offer.total_score = total_score
+      if(trading_volume_portion_enabled) {
+        const userTradedVol = sumBy(filter(offerList, {"offer_type": offer_type, username: offer.username}), sum_vol_field) || 0;
+        offer.trading_volume_portion_score = tradedVol == 0 ? 0 : -1 * Number(trading_volume_portion_weight) * userTradedVol / tradedVol;
+      }
+
+      let total_score = 0;
+      [
+        "same_bank_score", "online_or_auto_score", "least_total_amount_score", "trading_volume_portion_score"
+      ].forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
+
+      offer.total_score = total_score;
     })
     
-    setSortedOfferList(sortBy(availableOffer, "total_score").reverse());
+    const sortedOffers = sortBy(availableOffer, "total_score").reverse();
+    const bestOffer = first(sortedOffers);
+    if(bestOffer) {
+      bestOffer[sum_vol_field] = (bestOffer[sum_vol_field] || 0) + amount;
+    }
+    setSortedOfferList(sortedOffers);
   }
   const [open, setOpen] = useState(false);
 
@@ -212,67 +232,75 @@ function App() {
       </Collapse>
 
       <Button variant="secondary" onClick={findBestOffer}>Find Best Offers</Button>
-        <table>
-            <thead>
+      
+      <table>
+          <thead>
+            <tr>
+                <th>id</th>
+                <th>total_score</th>
+                {same_bank_enabled && <th>same_bank_score</th>}
+                {online_or_auto_enabled && <th>online_or_auto_score</th>}
+                {least_total_amount_enabled && <th>least_total_amount_score</th>}
+                {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
+                <th>offer_type</th>
+                <th>username</th>
+                <th>online_or_auto</th>
+                <th>bank_name</th>
+                <th>total_amount</th>
+                <th>effective_max_amount</th>
+                <th>payment_method</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedOfferList.map(offer => 
               <tr>
-                  <th>id</th>
-                  <th>total_score</th>
-                  {same_bank_enabled && <th>same_bank_score</th>}
-                  {online_or_auto_enabled && <th>online_or_auto_score</th>}
-                  <th>offer_type</th>
-                  <th>username</th>
-                  <th>online_or_auto</th>
-                  <th>bank_name</th>
-                  <th>total_amount</th>
-                  <th>effective_max_amount</th>
-                  <th>payment_method</th>
+                <td>{offer.id}</td>
+                <td>{offer.total_score}</td>
+                {same_bank_enabled && <td>{offer.same_bank_score}</td>}
+                {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
+                {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
+                {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
+                <td>{offer.offer_type}</td>
+                <td>{offer.username}</td>
+                <td>{offer.online_or_auto}</td>
+                <td>{offer.bank_name}</td>
+                <td>{offer.total_amount}</td>
+                <td>{offer.effective_max_amount}</td>
+                <td>{offer.payment_method}</td>
               </tr>
-            </thead>
-            <tbody>
-              {sortedOfferList.map(offer => 
-                <tr>
-                  <td>{offer.id}</td>
-                  <td>{offer.total_score}</td>
-                  {same_bank_enabled && <td>{offer.same_bank_score}</td>}
-                  {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
-                  <td>{offer.offer_type}</td>
-                  <td>{offer.username}</td>
-                  <td>{offer.online_or_auto}</td>
-                  <td>{offer.bank_name}</td>
-                  <td>{offer.total_amount}</td>
-                  <td>{offer.effective_max_amount}</td>
-                  <td>{offer.payment_method}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-          <table>
-            <thead>
-              <tr>
-                  <th>offer_type</th>
-                  <th>username</th>
-                  <th>online_or_auto</th>
-                  <th>bank_name</th>
-                  <th>total_amount</th>
-                  <th>effective_max_amount</th>
-                  <th>payment_method</th>
-              </tr>
-            </thead>
-            <tbody>
-              {offerList.map(offer => 
-                <tr>
-                  <td>{offer.offer_type}</td>
-                  <td>{offer.username}</td>
-                  <td>{offer.online_or_auto}</td>
-                  <td>{offer.bank_name}</td>
-                  <td>{offer.total_amount}</td>
-                  <td>{offer.effective_max_amount}</td>
-                  <td>{offer.payment_method}</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-     
+            )}
+          </tbody>
+      </table>
+      <table>
+        <thead>
+          <tr>
+              <th>offer_type</th>
+              <th>username</th>
+              <th>online_or_auto</th>
+              <th>bank_name</th>
+              <th>total_amount</th>
+              <th>effective_max_amount</th>
+              <th>supported_deposit</th>
+              <th>supported_withdrawal</th>
+              <th>payment_method</th>
+          </tr>
+        </thead>
+        <tbody>
+          {offerList.map(offer => 
+            <tr>
+              <td>{offer.offer_type}</td>
+              <td>{offer.username}</td>
+              <td>{offer.online_or_auto}</td>
+              <td>{offer.bank_name}</td>
+              <td>{offer.total_amount}</td>
+              <td>{offer.effective_max_amount}</td>
+              <td>{offer.supported_deposit}</td>
+              <td>{offer.supported_withdrawal}</td>
+              <td>{offer.payment_method}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }
