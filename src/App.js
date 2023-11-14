@@ -185,28 +185,27 @@ function App() {
               <label> Fiat withdrawal</label>
             </Col>
           </Row>
+          <br />
           <Row>
             <Col >
               <InputGroup className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-default">
+                <InputGroup.Text>
                   Amount:
                 </InputGroup.Text>
                 <Form.Control
                   placeholder={fiatAmount}
                   onChange={ e => setFiatAmount(e.target.value)}
-                  aria-describedby="inputGroup-sizing-default"
                 />
               </InputGroup>
             </Col>
             <Col >
               <InputGroup className="mb-3">
-                <InputGroup.Text id="inputGroup-sizing-default">
+                <InputGroup.Text>
                   Bank name:
                 </InputGroup.Text>
                 <Form.Control
                   placeholder={bankName}
                   onChange={ e => setBankName(e.target.value)}
-                  aria-describedby="inputGroup-sizing-default"
                 />
               </InputGroup>
             </Col>
