@@ -110,7 +110,7 @@ function App() {
             seteffective_max_amount_weight,
             "within_hours",
             effective_max_amount_within_hours,
-            setdeprioritize_offer_has_cancelled_within_hours,
+            seteffective_max_amount_within_hours,
           )}
         </div>
         <div className="col">
