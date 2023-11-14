@@ -13,6 +13,14 @@ function App() {
   const [deprioritize_offer_has_cancelled_enabled, setdeprioritize_offer_has_cancelled_enabled] = useState(true);
   const [deprioritize_offer_has_cancelled_weight, setdeprioritize_offer_has_cancelled_weight] = useState(-100);
   const [deprioritize_offer_has_cancelled_within_hours, setdeprioritize_offer_has_cancelled_within_hours] = useState(24);
+  const [trading_volume_portion_enabled, settrading_volume_portion_enabled] = useState(true);
+  const [trading_volume_portion_weight, settrading_volume_portion_weight] = useState(50);
+
+  const [released_rate_enabled, setreleased_rate_enabled] = useState(true);
+  const [released_rate_weight, setreleased_rate_weight] = useState(10);
+
+  const [completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled] = useState(true);
+  const [completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight] = useState(30);
 
   const renderElementWithWeightOnly = (name, enable, setEnableFunc, weight, setWeightFunc) => {
     return (
@@ -60,6 +68,9 @@ function App() {
             setdeprioritize_offer_has_cancelled_within_hours,
             )}
          
+          {renderElementWithWeightOnly("trading_volume_portion", trading_volume_portion_enabled, settrading_volume_portion_enabled, trading_volume_portion_weight, settrading_volume_portion_weight)}
+          {renderElementWithWeightOnly("released_rate", released_rate_enabled, setreleased_rate_enabled, released_rate_weight, setreleased_rate_weight)}
+          {renderElementWithWeightOnly("completion_time_block_in_seconds", completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled, completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight)}
         </div>
         <div className="col">
           
