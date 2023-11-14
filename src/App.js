@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Table from 'react-bootstrap/Table';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 
 function App() {
@@ -186,12 +187,28 @@ function App() {
           </Row>
           <Row>
             <Col >
-              <lablel>Amount:</lablel>
-              <input value={fiatAmount} onChange={ e => setFiatAmount(e.target.value)}/>
+              <InputGroup className="mb-3">
+                <InputGroup.Text id="inputGroup-sizing-default">
+                  Amount:
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder={fiatAmount}
+                  onChange={ e => setFiatAmount(e.target.value)}
+                  aria-describedby="inputGroup-sizing-default"
+                />
+              </InputGroup>
             </Col>
             <Col >
-              <lablel>Bank name:</lablel>
-              <input value={bankName} onChange={ e => setBankName(e.target.value)}/>
+              <InputGroup className="mb-3">
+                <InputGroup.Text id="inputGroup-sizing-default">
+                  Bank name:
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder={bankName}
+                  onChange={ e => setBankName(e.target.value)}
+                  aria-describedby="inputGroup-sizing-default"
+                />
+              </InputGroup>
             </Col>
             <Col >
             <Button
