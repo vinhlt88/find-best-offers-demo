@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Table from 'react-bootstrap/Table';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
@@ -195,14 +196,29 @@ function App() {
               <label> Fiat withdrawal</label>
             </Col>
           </Row>
+          <br />
           <Row>
             <Col >
-              <lablel>Amount:</lablel>
-              <input value={fiatAmount} onChange={ e => setFiatAmount(e.target.value)}/>
+              <InputGroup className="mb-3">
+                <InputGroup.Text>
+                  Amount:
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder={fiatAmount}
+                  onChange={ e => setFiatAmount(e.target.value)}
+                />
+              </InputGroup>
             </Col>
             <Col >
-              <lablel>Bank name:</lablel>
-              <input value={bankName} onChange={ e => setBankName(e.target.value)}/>
+              <InputGroup className="mb-3">
+                <InputGroup.Text>
+                  Bank name:
+                </InputGroup.Text>
+                <Form.Control
+                  placeholder={bankName}
+                  onChange={ e => setBankName(e.target.value)}
+                />
+              </InputGroup>
             </Col>
             <Col >
             <Button
