@@ -42,6 +42,10 @@ function App() {
   const [effective_max_amount_weight, seteffective_max_amount_weight] = useState(0);
   const [effective_max_amount_within_hours, seteffective_max_amount_within_hours] = useState(500000000);
 
+  const [offerType, setOfferType] = useState("sell");
+  const [fiatAmount, setFiatAmount] = useState(1000000);
+  const [bankName, setBankName] = useState("Vietcombank");
+
   const renderElementWithWeightOnly = (name, enable, setEnableFunc, weight, setWeightFunc) => {
     return (
       <Row>
@@ -92,9 +96,9 @@ function App() {
 
 
   const findBestOffer = () => {
-    const offer_type = "sell";
-    const amount = 200000;
-    const bank_name = "Vietcombank";
+    const offer_type = offerType;
+    const amount = Number(fiatAmount);
+    const bank_name = bankName;
 
     const availableOffer = offerList.filter(o => o.offer_type == offer_type && o.total_amount >= amount);
     const total_amount_field =  offer_type == "sell" ? "effective_max_amount":  "total_amount";
@@ -137,6 +141,7 @@ function App() {
   const [sortingConfigOpen, setsortingConfigOpen] = useState(false);
   const [offerListOpen, setofferListOpen] = useState(true);
   const [bestOffersOpen, setbestOffersOpen] = useState(true);
+  const [formOpen, setformOpen] = useState(false);
   return (
     <div className="container">
       <br />
@@ -150,7 +155,11 @@ function App() {
 
         </div>
         <div className='col'>
-          <Button onClick={findBestOffer}>Find Best Offers</Button>
+          <Button
+              onClick={() => setformOpen(!formOpen)}
+            >
+              Deposit/Withdrawal Info
+            </Button>
         </div>
         <div className='col'>
           <Button
@@ -161,6 +170,37 @@ function App() {
         </div>
       </div>
       <br />
+      <Collapse in={formOpen}>
+        <div>
+          <Row>
+            <Col >
+              <input type='radio' name="offerType" checked={offerType == "sell"}  onChange={ e => setOfferType("sell")}/>
+              <label> Fiat deposit</label>
+            </Col>
+            <Col >
+              <input type='radio' name="offerType" checked={offerType == "buy"}  onChange={ e => setOfferType("buy")}/>
+              <label> Fiat withdrawal</label>
+            </Col>
+          </Row>
+          <Row>
+            <Col >
+              <lablel>Amount:</lablel>
+              <input value={fiatAmount} onChange={ e => setFiatAmount(e.target.value)}/>
+            </Col>
+            <Col >
+              <lablel>Bank name:</lablel>
+              <input value={bankName} onChange={ e => setBankName(e.target.value)}/>
+            </Col>
+            <Col >
+            <Button
+              onClick={findBestOffer}
+            >
+              Find best offer
+            </Button>
+            </Col>
+          </Row>
+        </div>
+      </Collapse>
       <Collapse in={sortingConfigOpen}>
         <Form>
           <br />
