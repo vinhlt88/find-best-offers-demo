@@ -193,11 +193,11 @@ function App() {
           <Row>
             <Col >
               <input type='radio' name="offerType" checked={offerType == "sell"}  onChange={ e => setOfferType("sell")}/>
-              <label> Fiat deposit</label>
+              <label>&ensp;Fiat deposit</label>
             </Col>
             <Col >
               <input type='radio' name="offerType" checked={offerType == "buy"}  onChange={ e => setOfferType("buy")}/>
-              <label> Fiat withdrawal</label>
+              <label>&ensp;Fiat withdrawal</label>
             </Col>
           </Row>
           <br />
