@@ -10,6 +10,15 @@ function App() {
   const [least_total_amount_enabled, setleast_total_amount_enabled] = useState(true);
   const [least_total_amount_weight, setleast_total_amount_weight] = useState(0.1);
 
+  const [trading_volume_portion_enabled, settrading_volume_portion_enabled] = useState(true);
+  const [trading_volume_portion_weight, settrading_volume_portion_weight] = useState(50);
+
+  const [released_rate_enabled, setreleased_rate_enabled] = useState(true);
+  const [released_rate_weight, setreleased_rate_weight] = useState(10);
+
+  const [completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled] = useState(true);
+  const [completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight] = useState(30);
+
   const renderElementWithWeightOnly = (name, enable, setEnableFunc, weight, setWeightFunc) => {
     return (
       <div class="input-group">
@@ -31,7 +40,9 @@ function App() {
           {renderElementWithWeightOnly("same_bank", same_bank_enabled, setsame_bank_enabled, same_bank_weight, setsame_bank_weight)}
           {renderElementWithWeightOnly("online_or_auto", online_or_auto_enabled, setonline_or_auto_enabled, online_or_auto_weight, setonline_or_auto_weight)}
           {renderElementWithWeightOnly("least_total_amount", least_total_amount_enabled, setleast_total_amount_enabled, least_total_amount_weight, setleast_total_amount_weight)}
-         
+          {renderElementWithWeightOnly("trading_volume_portion", trading_volume_portion_enabled, settrading_volume_portion_enabled, trading_volume_portion_weight, settrading_volume_portion_weight)}
+          {renderElementWithWeightOnly("released_rate", released_rate_enabled, setreleased_rate_enabled, released_rate_weight, setreleased_rate_weight)}
+          {renderElementWithWeightOnly("completion_time_block_in_seconds", completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled, completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight)}
         </div>
         <div class="col">
           
