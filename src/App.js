@@ -108,32 +108,36 @@ function App() {
     const sum_vol_field = offer_type == "sell" ? "supported_deposit" : "supported_withdrawal";
     const tradedVol = sumBy(filter(offerList, {"offer_type": offer_type}), sum_vol_field) || 0;
     availableOffer.forEach(offer => {
+      const enabled_fields = [];
       if(same_bank_enabled){
         offer.same_bank_score = offer.bank_name == bank_name ? Number(same_bank_weight) : 0; 
+        enabled_fields.push("same_bank_score");
       }
 
       if(online_or_auto_enabled){
         offer.online_or_auto_score = offer.online_or_auto == "TRUE" ? Number(online_or_auto_weight) : 0; 
+        enabled_fields.push("online_or_auto_score");
       }
 
       if(least_total_amount_enabled){
         offer.least_total_amount_score = maxTotalAmount == 0 ? 0 : -1 * Number(least_total_amount_weight) * offer[total_amount_field] / maxTotalAmount;
+        enabled_fields.push("least_total_amount_score");
       }
 
       if(trading_volume_portion_enabled) {
         const userTradedVol = sumBy(filter(offerList, {"offer_type": offer_type, username: offer.username}), sum_vol_field) || 0;
         offer.trading_volume_portion_score = tradedVol == 0 ? 0 : -1 * Number(trading_volume_portion_weight) * userTradedVol / tradedVol;
+        enabled_fields.push("trading_volume_portion_score");
       }
 
       if(effective_max_amount_enabled) {
         const effective = min([offer.effective_max_amount, Number(effective_max_amount_max_amount)]);
         offer.effective_max_amount_score = Number(effective_max_amount_weight) *  effective / 1000000000;
+        enabled_fields.push("effective_max_amount_score");
       }
 
       let total_score = 0;
-      [
-        "same_bank_score", "online_or_auto_score", "least_total_amount_score", "trading_volume_portion_score", "effective_max_amount_score"
-      ].forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
+      enabled_fields.forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
 
       offer.total_score = total_score;
     })
@@ -365,6 +369,7 @@ function App() {
           <Table striped bordered hover>
             <thead>
               <tr>
+                  <th>id</th>
                   <th>offer_type</th>
                   <th>username</th>
                   <th>online_or_auto</th>
@@ -379,6 +384,7 @@ function App() {
             <tbody>
               {offerList.map(offer => 
                 <tr>
+                  <td>{offer.id}</td>
                   <td>{offer.offer_type}</td>
                   <td>{offer.username}</td>
                   <td>{offer.online_or_auto}</td>
