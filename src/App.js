@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import initOfferList from './offer_list.json';
+import { sortBy } from "lodash";
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
@@ -58,9 +60,33 @@ function App() {
     )
   };
 
-  const offerList =[
+  const [offerList, setOfferList] = useState(initOfferList);
+  const [sortedOfferList, setSortedOfferList] = useState([]);
 
-  ]
+
+  const findBestOffer = () => {
+    const offer_type = "sell";
+    const amount = 200000;
+    const bank_name = "Vietcombank";
+
+    const availableOffer = offerList.filter(o => o.offer_type = offer_type && o.total_amount >= amount);
+    availableOffer.forEach(offer => {
+      if(same_bank_enabled){
+        offer.same_bank_score = offer.bank_name == bank_name ? Number(same_bank_weight) : 0; 
+      }
+
+      if(online_or_auto_enabled){
+        offer.online_or_auto_score = offer.online_or_auto == "TRUE" ? Number(online_or_auto_weight) : 0; 
+      }
+
+      let total_score = 0;
+      ["same_bank_score", "online_or_auto_score"].forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
+
+      offer.total_score = total_score
+    })
+    
+    setSortedOfferList(sortBy(availableOffer, "total_score").reverse());
+  }
 
   return (
     <div className="container">
@@ -113,10 +139,70 @@ function App() {
             seteffective_max_amount_within_hours,
           )}
 
-          <button>Find Best Offers</button>
+          <button onClick={findBestOffer}>Find Best Offers</button>
         </div>
+        
         <div className="col">
-          
+        <table>
+            <thead>
+              <tr>
+                  <th>id</th>
+                  <th>total_score</th>
+                  {same_bank_enabled && <th>same_bank_score</th>}
+                  {online_or_auto_enabled && <th>online_or_auto_score</th>}
+                  <th>offer_type</th>
+                  <th>username</th>
+                  <th>online_or_auto</th>
+                  <th>bank_name</th>
+                  <th>total_amount</th>
+                  <th>effective_max_amount</th>
+                  <th>payment_method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedOfferList.map(offer => 
+                <tr>
+                  <td>{offer.id}</td>
+                  <td>{offer.total_score}</td>
+                  {same_bank_enabled && <td>{offer.same_bank_score}</td>}
+                  {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
+                  <td>{offer.offer_type}</td>
+                  <td>{offer.username}</td>
+                  <td>{offer.online_or_auto}</td>
+                  <td>{offer.bank_name}</td>
+                  <td>{offer.total_amount}</td>
+                  <td>{offer.effective_max_amount}</td>
+                  <td>{offer.payment_method}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <table>
+            <thead>
+              <tr>
+                  <th>offer_type</th>
+                  <th>username</th>
+                  <th>online_or_auto</th>
+                  <th>bank_name</th>
+                  <th>total_amount</th>
+                  <th>effective_max_amount</th>
+                  <th>payment_method</th>
+              </tr>
+            </thead>
+            <tbody>
+              {offerList.map(offer => 
+                <tr>
+                  <td>{offer.offer_type}</td>
+                  <td>{offer.username}</td>
+                  <td>{offer.online_or_auto}</td>
+                  <td>{offer.bank_name}</td>
+                  <td>{offer.total_amount}</td>
+                  <td>{offer.effective_max_amount}</td>
+                  <td>{offer.payment_method}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
