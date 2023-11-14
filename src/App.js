@@ -90,7 +90,7 @@ function App() {
             setleast_disputed_rate_weight,
             "within_hours",
             least_disputed_rate_within_hours,
-            setdeprioritize_offer_has_cancelled_within_hours,
+            setleast_disputed_rate_within_hours,
           )}
           {renderElementWithWeightAndExtra(
             "taker_fiat_trading_amount",
@@ -100,7 +100,7 @@ function App() {
             settaker_fiat_trading_amount_weight,
             "within_hours",
             taker_fiat_trading_amount_within_hours,
-            setdeprioritize_offer_has_cancelled_within_hours,
+            settaker_fiat_trading_amount_within_hours,
           )}
           {renderElementWithWeightAndExtra(
             "effective_max_amount",
