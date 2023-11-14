@@ -20,21 +20,21 @@ function App() {
   const [trading_volume_portion_enabled, settrading_volume_portion_enabled] = useState(true);
   const [trading_volume_portion_weight, settrading_volume_portion_weight] = useState(20);
 
-  const [released_rate_enabled, setreleased_rate_enabled] = useState(true);
+  const [released_rate_enabled, setreleased_rate_enabled] = useState(false);
   const [released_rate_weight, setreleased_rate_weight] = useState(10);
 
-  const [completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled] = useState(true);
+  const [completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled] = useState(false);
   const [completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight] = useState(30);
 
-  const [deprioritize_offer_has_cancelled_enabled, setdeprioritize_offer_has_cancelled_enabled] = useState(true);
+  const [deprioritize_offer_has_cancelled_enabled, setdeprioritize_offer_has_cancelled_enabled] = useState(false);
   const [deprioritize_offer_has_cancelled_weight, setdeprioritize_offer_has_cancelled_weight] = useState(-100);
   const [deprioritize_offer_has_cancelled_within_hours, setdeprioritize_offer_has_cancelled_within_hours] = useState(24);
 
-  const [least_disputed_rate_enabled, setleast_disputed_rate_enabled] = useState(true);
+  const [least_disputed_rate_enabled, setleast_disputed_rate_enabled] = useState(false);
   const [least_disputed_rate_weight, setleast_disputed_rate_weight] = useState(-10);
   const [least_disputed_rate_within_hours, setleast_disputed_rate_within_hours] = useState(24);
 
-  const [taker_fiat_trading_amount_enabled, settaker_fiat_trading_amount_enabled] = useState(true);
+  const [taker_fiat_trading_amount_enabled, settaker_fiat_trading_amount_enabled] = useState(false);
   const [taker_fiat_trading_amount_weight, settaker_fiat_trading_amount_weight] = useState(-10);
   const [taker_fiat_trading_amount_within_hours, settaker_fiat_trading_amount_within_hours] = useState(24);
 
@@ -134,20 +134,34 @@ function App() {
     }
     setSortedOfferList(sortedOffers);
   }
-  const [open, setOpen] = useState(false);
-
+  const [sortingConfigOpen, setsortingConfigOpen] = useState(false);
+  const [offerListOpen, setofferListOpen] = useState(true);
+  const [bestOffersOpen, setbestOffersOpen] = useState(true);
   return (
     <div className="container">
       <br />
-      <Button
-        onClick={() => setOpen(!open)}
-        aria-controls="example-collapse-text"
-        aria-expanded={open}
-        variant="secondary"
-      >
-        Click here
-      </Button>
-      <Collapse in={open}>
+      <div className='row'>
+        <div className='col'>
+          <Button
+            onClick={() => setsortingConfigOpen(!sortingConfigOpen)}
+          >
+            Sorting Configuration
+          </Button>
+
+        </div>
+        <div className='col'>
+          <Button onClick={findBestOffer}>Find Best Offers</Button>
+        </div>
+        <div className='col'>
+          <Button
+            onClick={() => setofferListOpen(!offerListOpen)}
+          >
+            Offer List
+          </Button>
+        </div>
+      </div>
+      <br />
+      <Collapse in={sortingConfigOpen}>
         <Form>
           <br />
           <Row>
@@ -164,6 +178,19 @@ function App() {
           <br />
           <Row>
             {renderElementWithWeightOnly("trading_volume_portion", trading_volume_portion_enabled, settrading_volume_portion_enabled, trading_volume_portion_weight, settrading_volume_portion_weight)}
+          </Row>
+          <br />
+          <Row>
+            {renderElementWithWeightAndExtra(
+              "effective_max_amount",
+              effective_max_amount_enabled,
+              seteffective_max_amount_enabled,
+              effective_max_amount_weight,
+              seteffective_max_amount_weight,
+              "within_hours",
+              effective_max_amount_within_hours,
+              seteffective_max_amount_within_hours,
+            )}
           </Row>
           <br />
           
@@ -214,93 +241,92 @@ function App() {
             )}       
           </Row>
           <br />
-          <Row>
-            {renderElementWithWeightAndExtra(
-              "effective_max_amount",
-              effective_max_amount_enabled,
-              seteffective_max_amount_enabled,
-              effective_max_amount_weight,
-              seteffective_max_amount_weight,
-              "within_hours",
-              effective_max_amount_within_hours,
-              seteffective_max_amount_within_hours,
-            )}
-          </Row>
-          <br />
+          
           
         </Form>
       </Collapse>
+        <div>
+          <br />
+          <h2 onClick={() => setbestOffersOpen(!bestOffersOpen)} >Best Offers</h2>
+          <Collapse in={bestOffersOpen}>
+          <table>
+              <thead>
+                <tr>
+                    <th>id</th>
+                    <th>total_score</th>
+                    {same_bank_enabled && <th>same_bank_score</th>}
+                    {online_or_auto_enabled && <th>online_or_auto_score</th>}
+                    {least_total_amount_enabled && <th>least_total_amount_score</th>}
+                    {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
+                    <th>offer_type</th>
+                    <th>username</th>
+                    <th>online_or_auto</th>
+                    <th>bank_name</th>
+                    <th>total_amount</th>
+                    <th>effective_max_amount</th>
+                    <th>payment_method</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedOfferList.map(offer => 
+                  <tr>
+                    <td>{offer.id}</td>
+                    <td>{offer.total_score}</td>
+                    {same_bank_enabled && <td>{offer.same_bank_score}</td>}
+                    {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
+                    {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
+                    {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
+                    <td>{offer.offer_type}</td>
+                    <td>{offer.username}</td>
+                    <td>{offer.online_or_auto}</td>
+                    <td>{offer.bank_name}</td>
+                    <td>{offer.total_amount}</td>
+                    <td>{offer.effective_max_amount}</td>
+                    <td>{offer.payment_method}</td>
+                  </tr>
+                )}
+              </tbody>
+          </table>
+          </Collapse>
+        </div>
+    
 
-      <Button variant="secondary" onClick={findBestOffer}>Find Best Offers</Button>
-      
-      <table>
-          <thead>
-            <tr>
-                <th>id</th>
-                <th>total_score</th>
-                {same_bank_enabled && <th>same_bank_score</th>}
-                {online_or_auto_enabled && <th>online_or_auto_score</th>}
-                {least_total_amount_enabled && <th>least_total_amount_score</th>}
-                {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
-                <th>offer_type</th>
-                <th>username</th>
-                <th>online_or_auto</th>
-                <th>bank_name</th>
-                <th>total_amount</th>
-                <th>effective_max_amount</th>
-                <th>payment_method</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedOfferList.map(offer => 
+      <Collapse in={offerListOpen}>
+        <div>
+          <br />
+          <h2>Offer List</h2>
+          <table>
+            <thead>
               <tr>
-                <td>{offer.id}</td>
-                <td>{offer.total_score}</td>
-                {same_bank_enabled && <td>{offer.same_bank_score}</td>}
-                {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
-                {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
-                {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
-                <td>{offer.offer_type}</td>
-                <td>{offer.username}</td>
-                <td>{offer.online_or_auto}</td>
-                <td>{offer.bank_name}</td>
-                <td>{offer.total_amount}</td>
-                <td>{offer.effective_max_amount}</td>
-                <td>{offer.payment_method}</td>
+                  <th>offer_type</th>
+                  <th>username</th>
+                  <th>online_or_auto</th>
+                  <th>bank_name</th>
+                  <th>total_amount</th>
+                  <th>effective_max_amount</th>
+                  <th>supported_deposit</th>
+                  <th>supported_withdrawal</th>
+                  <th>payment_method</th>
               </tr>
-            )}
-          </tbody>
-      </table>
-      <table>
-        <thead>
-          <tr>
-              <th>offer_type</th>
-              <th>username</th>
-              <th>online_or_auto</th>
-              <th>bank_name</th>
-              <th>total_amount</th>
-              <th>effective_max_amount</th>
-              <th>supported_deposit</th>
-              <th>supported_withdrawal</th>
-              <th>payment_method</th>
-          </tr>
-        </thead>
-        <tbody>
-          {offerList.map(offer => 
-            <tr>
-              <td>{offer.offer_type}</td>
-              <td>{offer.username}</td>
-              <td>{offer.online_or_auto}</td>
-              <td>{offer.bank_name}</td>
-              <td>{offer.total_amount}</td>
-              <td>{offer.effective_max_amount}</td>
-              <td>{offer.supported_deposit}</td>
-              <td>{offer.supported_withdrawal}</td>
-              <td>{offer.payment_method}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {offerList.map(offer => 
+                <tr>
+                  <td>{offer.offer_type}</td>
+                  <td>{offer.username}</td>
+                  <td>{offer.online_or_auto}</td>
+                  <td>{offer.bank_name}</td>
+                  <td>{offer.total_amount}</td>
+                  <td>{offer.effective_max_amount}</td>
+                  <td>{offer.supported_deposit}</td>
+                  <td>{offer.supported_withdrawal}</td>
+                  <td>{offer.payment_method}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Collapse>
     </div>
   );
 }
