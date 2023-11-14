@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import initOfferList from './offer_list.json';
-import { filter, first, map, max, maxBy, sortBy, sumBy } from "lodash";
+import { filter, first, map, max, maxBy, min, sortBy, sumBy } from "lodash";
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Table from 'react-bootstrap/Table';
-
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
@@ -41,8 +40,8 @@ function App() {
   const [taker_fiat_trading_amount_within_hours, settaker_fiat_trading_amount_within_hours] = useState(24);
 
   const [effective_max_amount_enabled, seteffective_max_amount_enabled] = useState(true);
-  const [effective_max_amount_weight, seteffective_max_amount_weight] = useState(0);
-  const [effective_max_amount_within_hours, seteffective_max_amount_within_hours] = useState(500000000);
+  const [effective_max_amount_weight, seteffective_max_amount_weight] = useState(0.5);
+  const [effective_max_amount_max_amount, seteffective_max_amount_max_amount] = useState(500000000);
 
   const [offerType, setOfferType] = useState("sell");
   const [fiatAmount, setFiatAmount] = useState(1000000);
@@ -125,9 +124,14 @@ function App() {
         offer.trading_volume_portion_score = tradedVol == 0 ? 0 : -1 * Number(trading_volume_portion_weight) * userTradedVol / tradedVol;
       }
 
+      if(effective_max_amount_enabled) {
+        const effective = min([offer.effective_max_amount, Number(effective_max_amount_max_amount)]);
+        offer.effective_max_amount_score = Number(effective_max_amount_weight) *  effective / 1000000000;
+      }
+
       let total_score = 0;
       [
-        "same_bank_score", "online_or_auto_score", "least_total_amount_score", "trading_volume_portion_score"
+        "same_bank_score", "online_or_auto_score", "least_total_amount_score", "trading_volume_portion_score", "effective_max_amount_score"
       ].forEach(key_score => total_score += offer[key_score] ? offer[key_score] : 0 )
 
       offer.total_score = total_score;
@@ -137,6 +141,13 @@ function App() {
     const bestOffer = first(sortedOffers);
     if(bestOffer) {
       bestOffer[sum_vol_field] = (bestOffer[sum_vol_field] || 0) + amount;
+      if(offer_type == "sell") {
+        bestOffer.total_amount -= amount;
+        bestOffer.effective_max_amount -= amount;
+      } else {
+        bestOffer.total_amount += amount;
+        bestOffer.effective_max_amount += amount;
+      }
     }
     setSortedOfferList(sortedOffers);
   }
@@ -229,9 +240,9 @@ function App() {
               seteffective_max_amount_enabled,
               effective_max_amount_weight,
               seteffective_max_amount_weight,
-              "within_hours",
-              effective_max_amount_within_hours,
-              seteffective_max_amount_within_hours,
+              "max_amount",
+              effective_max_amount_max_amount,
+              seteffective_max_amount_max_amount,
             )}
           </Row>
           <br />
@@ -298,6 +309,7 @@ function App() {
                       {online_or_auto_enabled && <th>online_or_auto_score</th>}
                       {least_total_amount_enabled && <th>least_total_amount_score</th>}
                       {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
+                      {effective_max_amount_enabled && <th>effective_max_amount_score</th>}
                       <th>offer_type</th>
                       <th>username</th>
                       <th>online_or_auto</th>
@@ -316,6 +328,7 @@ function App() {
                       {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
                       {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
                       {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
+                      {effective_max_amount_enabled && <td>{offer.effective_max_amount_score}</td>}
                       <td>{offer.offer_type}</td>
                       <td>{offer.username}</td>
                       <td>{offer.online_or_auto}</td>
