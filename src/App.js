@@ -23,6 +23,18 @@ function App() {
   const [deprioritize_offer_has_cancelled_weight, setdeprioritize_offer_has_cancelled_weight] = useState(-100);
   const [deprioritize_offer_has_cancelled_within_hours, setdeprioritize_offer_has_cancelled_within_hours] = useState(24);
 
+  const [least_disputed_rate_enabled, setleast_disputed_rate_enabled] = useState(true);
+  const [least_disputed_rate_weight, setleast_disputed_rate_weight] = useState(-10);
+  const [least_disputed_rate_within_hours, setleast_disputed_rate_within_hours] = useState(24);
+
+  const [taker_fiat_trading_amount_enabled, settaker_fiat_trading_amount_enabled] = useState(true);
+  const [taker_fiat_trading_amount_weight, settaker_fiat_trading_amount_weight] = useState(-10);
+  const [taker_fiat_trading_amount_within_hours, settaker_fiat_trading_amount_within_hours] = useState(24);
+
+  const [effective_max_amount_enabled, seteffective_max_amount_enabled] = useState(true);
+  const [effective_max_amount_weight, seteffective_max_amount_weight] = useState(0);
+  const [effective_max_amount_within_hours, seteffective_max_amount_within_hours] = useState(500000000);
+
   const renderElementWithWeightOnly = (name, enable, setEnableFunc, weight, setWeightFunc) => {
     return (
       <div className='col'>
@@ -57,13 +69,11 @@ function App() {
           {renderElementWithWeightOnly("same_bank", same_bank_enabled, setsame_bank_enabled, same_bank_weight, setsame_bank_weight)}
           {renderElementWithWeightOnly("online_or_auto", online_or_auto_enabled, setonline_or_auto_enabled, online_or_auto_weight, setonline_or_auto_weight)}
           {renderElementWithWeightOnly("least_total_amount", least_total_amount_enabled, setleast_total_amount_enabled, least_total_amount_weight, setleast_total_amount_weight)}
-
           {renderElementWithWeightOnly("trading_volume_portion", trading_volume_portion_enabled, settrading_volume_portion_enabled, trading_volume_portion_weight, settrading_volume_portion_weight)}
           {renderElementWithWeightOnly("released_rate", released_rate_enabled, setreleased_rate_enabled, released_rate_weight, setreleased_rate_weight)}
           {renderElementWithWeightOnly("completion_time_block_in_seconds", completion_time_block_in_seconds_enabled, setcompletion_time_block_in_seconds_enabled, completion_time_block_in_seconds_weight, setcompletion_time_block_in_seconds_weight)}
-
           {renderElementWithWeightAndExtra(
-            "deprioritize_offer_has_cancelled", 
+            "deprioritize_offer_has_cancelled",
             deprioritize_offer_has_cancelled_enabled,
             setdeprioritize_offer_has_cancelled_enabled,
             deprioritize_offer_has_cancelled_weight,
@@ -71,9 +81,39 @@ function App() {
             "within_hours",
             deprioritize_offer_has_cancelled_within_hours,
             setdeprioritize_offer_has_cancelled_within_hours,
-            )}
+          )}
+          {renderElementWithWeightAndExtra(
+            "least_disputed_rate",
+            least_disputed_rate_enabled,
+            setleast_disputed_rate_enabled,
+            least_disputed_rate_weight,
+            setleast_disputed_rate_weight,
+            "within_hours",
+            least_disputed_rate_within_hours,
+            setleast_disputed_rate_within_hours,
+          )}
+          {renderElementWithWeightAndExtra(
+            "taker_fiat_trading_amount",
+            taker_fiat_trading_amount_enabled,
+            settaker_fiat_trading_amount_enabled,
+            taker_fiat_trading_amount_weight,
+            settaker_fiat_trading_amount_weight,
+            "within_hours",
+            taker_fiat_trading_amount_within_hours,
+            settaker_fiat_trading_amount_within_hours,
+          )}
+          {renderElementWithWeightAndExtra(
+            "effective_max_amount",
+            effective_max_amount_enabled,
+            seteffective_max_amount_enabled,
+            effective_max_amount_weight,
+            seteffective_max_amount_weight,
+            "within_hours",
+            effective_max_amount_within_hours,
+            seteffective_max_amount_within_hours,
+          )}
 
-            <button>Find Best Offers</button>
+          <button>Find Best Offers</button>
         </div>
         <div className="col">
           
