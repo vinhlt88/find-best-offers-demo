@@ -6,6 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
+import Table from 'react-bootstrap/Table';
+
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
@@ -241,61 +243,57 @@ function App() {
             )}       
           </Row>
           <br />
-          
-          
         </Form>
       </Collapse>
         <div>
           <br />
           <h2 onClick={() => setbestOffersOpen(!bestOffersOpen)} >Best Offers</h2>
           <Collapse in={bestOffersOpen}>
-          <table>
-              <thead>
-                <tr>
-                    <th>id</th>
-                    <th>total_score</th>
-                    {same_bank_enabled && <th>same_bank_score</th>}
-                    {online_or_auto_enabled && <th>online_or_auto_score</th>}
-                    {least_total_amount_enabled && <th>least_total_amount_score</th>}
-                    {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
-                    <th>offer_type</th>
-                    <th>username</th>
-                    <th>online_or_auto</th>
-                    <th>bank_name</th>
-                    <th>total_amount</th>
-                    <th>effective_max_amount</th>
-                    <th>payment_method</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedOfferList.map(offer => 
+            <Table striped bordered hover>
+                <thead>
                   <tr>
-                    <td>{offer.id}</td>
-                    <td>{offer.total_score}</td>
-                    {same_bank_enabled && <td>{offer.same_bank_score}</td>}
-                    {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
-                    {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
-                    {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
-                    <td>{offer.offer_type}</td>
-                    <td>{offer.username}</td>
-                    <td>{offer.online_or_auto}</td>
-                    <td>{offer.bank_name}</td>
-                    <td>{offer.total_amount}</td>
-                    <td>{offer.effective_max_amount}</td>
-                    <td>{offer.payment_method}</td>
+                      <th>id</th>
+                      <th>total_score</th>
+                      {same_bank_enabled && <th>same_bank_score</th>}
+                      {online_or_auto_enabled && <th>online_or_auto_score</th>}
+                      {least_total_amount_enabled && <th>least_total_amount_score</th>}
+                      {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
+                      <th>offer_type</th>
+                      <th>username</th>
+                      <th>online_or_auto</th>
+                      <th>bank_name</th>
+                      <th>total_amount</th>
+                      <th>effective_max_amount</th>
+                      <th>payment_method</th>
                   </tr>
-                )}
-              </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {sortedOfferList.map(offer => 
+                    <tr>
+                      <td>{offer.id}</td>
+                      <td>{offer.total_score}</td>
+                      {same_bank_enabled && <td>{offer.same_bank_score}</td>}
+                      {online_or_auto_enabled && <td>{offer.online_or_auto_score}</td>}
+                      {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
+                      {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
+                      <td>{offer.offer_type}</td>
+                      <td>{offer.username}</td>
+                      <td>{offer.online_or_auto}</td>
+                      <td>{offer.bank_name}</td>
+                      <td>{offer.total_amount}</td>
+                      <td>{offer.effective_max_amount}</td>
+                      <td>{offer.payment_method}</td>
+                    </tr>
+                  )}
+                </tbody>
+            </Table>
           </Collapse>
         </div>
-    
-
       <Collapse in={offerListOpen}>
         <div>
           <br />
           <h2>Offer List</h2>
-          <table>
+          <Table striped bordered hover>
             <thead>
               <tr>
                   <th>offer_type</th>
@@ -324,7 +322,7 @@ function App() {
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
         </div>
       </Collapse>
     </div>
