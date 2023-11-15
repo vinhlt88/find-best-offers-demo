@@ -386,14 +386,14 @@ function App() {
                       <td>{offer.username}</td>
                       <td>{offer.online_or_auto}</td>
                       <td>{offer.bank_name}</td>
-                      <td>{offer.total_amount}</td>
-                      <td>{offer.effective_max_amount}</td>
+                      <td>{new Intl.NumberFormat("vi-VN").format(offer.total_amount)}</td>
+                      <td>{new Intl.NumberFormat("vi-VN").format(offer.effective_max_amount)}</td>
                       <td>{offer.release_rate}</td>
                       <td>{offer.disputed_rate}</td>
                       <td>{offer.trade_completion_time}</td>
                       <td>{offer.has_cancelled_trade}</td>
-                      <td>{offer.supported_deposit}</td>
-                      <td>{offer.supported_withdrawal}</td>
+                      <td>{new Intl.NumberFormat("vi-VN").format(offer.supported_deposit || 0)}</td>
+                      <td>{new Intl.NumberFormat("vi-VN").format(offer.supported_withdrawal || 0)}</td>
                       <td>{offer.payment_method}</td>
                     </tr>
                   )}
@@ -432,14 +432,14 @@ function App() {
                     <td>{offer.username}</td>
                     <td>{offer.online_or_auto}</td>
                     <td>{offer.bank_name}</td>
-                    <td>{offer.total_amount}</td>
-                    <td>{offer.effective_max_amount}</td>
+                    <td>{new Intl.NumberFormat("vi-VN").format(offer.total_amount)}</td>
+                    <td>{new Intl.NumberFormat("vi-VN").format(offer.effective_max_amount)}</td>
                     <td>{offer.release_rate}</td>
                     <td>{offer.disputed_rate}</td>
                     <td>{offer.trade_completion_time}</td>
                     <td>{offer.has_cancelled_trade}</td>
-                    <td>{offer.supported_deposit}</td>
-                    <td>{offer.supported_withdrawal}</td>
+                    <td>{new Intl.NumberFormat("vi-VN").format(offer.supported_deposit || 0)}</td>
+                    <td>{new Intl.NumberFormat("vi-VN").format(offer.supported_withdrawal || 0)}</td>
                     <td>{offer.payment_method}</td>
                   </tr>
                 )}
