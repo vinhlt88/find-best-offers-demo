@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import Table from 'react-bootstrap/Table';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Card from 'react-bootstrap/Card';
 
 function App() {
   const [same_bank_enabled, setsame_bank_enabled] = useState(true);
@@ -199,17 +200,12 @@ function App() {
               Deposit/Withdrawal Info
             </Button>
         </div>
-        <div className='col'>
-          <Button
-            onClick={() => setofferListOpen(!offerListOpen)}
-          >
-            Offer List
-          </Button>
-        </div>
+       
       </div>
       <br />
       <Collapse in={formOpen}>
-        <div>
+        <Card>
+        <Card.Body>
           <Row>
             <Col >
               <input type='radio' name="offerType" checked={offerType == "sell"}  onChange={ e => setOfferType("sell")}/>
@@ -252,10 +248,12 @@ function App() {
             </Button>
             </Col>
           </Row>
-        </div>
+          </Card.Body>
+        </Card>
       </Collapse>
       <Collapse in={sortingConfigOpen}>
-        <Form>
+        <Card>
+          <Card.Body>
           <br />
           <Row>
             {renderElementWithWeightOnly("same_bank", same_bank_enabled, setsame_bank_enabled, same_bank_weight, setsame_bank_weight)}
@@ -334,13 +332,14 @@ function App() {
             )}       
           </Row> */}
           <br />
-        </Form>
+          </Card.Body>
+        </Card>
       </Collapse>
         <div>
           <br />
           <h2 onClick={() => setbestOffersOpen(!bestOffersOpen)} >Best Offers</h2>
           <Collapse in={bestOffersOpen}>
-            <Table striped bordered hover>
+            <Table striped bordered hover size="sm" variant="dark">
                 <thead>
                   <tr>
                       <th>id</th>
@@ -402,52 +401,52 @@ function App() {
             </Table>
           </Collapse>
         </div>
-      <Collapse in={offerListOpen}>
         <div>
           <br />
-          <h2>Offer List</h2>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                  <th>id</th>
-                  <th>offer_type</th>
-                  <th>username</th>
-                  <th>online_or_auto</th>
-                  <th>bank_name</th>
-                  <th>total_amount</th>
-                  <th>effective_max_amount</th>
-                  <th>release_rate</th>
-                  <th>disputed_rate</th>
-                  <th>trade_completion_time</th>
-                  <th>has_cancelled_trade</th>
-                  <th>supported_deposit</th>
-                  <th>supported_withdrawal</th>
-                  <th>payment_method</th>
-              </tr>
-            </thead>
-            <tbody>
-              {offerList.map(offer => 
+          <h2 onClick={() => setofferListOpen(!offerListOpen)} >Offer list</h2>
+          <Collapse in={offerListOpen}>
+            <Table striped bordered hover variant="dark">
+              <thead>
                 <tr>
-                  <td>{offer.id}</td>
-                  <td>{offer.offer_type}</td>
-                  <td>{offer.username}</td>
-                  <td>{offer.online_or_auto}</td>
-                  <td>{offer.bank_name}</td>
-                  <td>{offer.total_amount}</td>
-                  <td>{offer.effective_max_amount}</td>
-                  <td>{offer.release_rate}</td>
-                  <td>{offer.disputed_rate}</td>
-                  <td>{offer.trade_completion_time}</td>
-                  <td>{offer.has_cancelled_trade}</td>
-                  <td>{offer.supported_deposit}</td>
-                  <td>{offer.supported_withdrawal}</td>
-                  <td>{offer.payment_method}</td>
+                    <th>id</th>
+                    <th>offer_type</th>
+                    <th>username</th>
+                    <th>online_or_auto</th>
+                    <th>bank_name</th>
+                    <th>total_amount</th>
+                    <th>effective_max_amount</th>
+                    <th>release_rate</th>
+                    <th>disputed_rate</th>
+                    <th>trade_completion_time</th>
+                    <th>has_cancelled_trade</th>
+                    <th>supported_deposit</th>
+                    <th>supported_withdrawal</th>
+                    <th>payment_method</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {offerList.map(offer => 
+                  <tr>
+                    <td>{offer.id}</td>
+                    <td>{offer.offer_type}</td>
+                    <td>{offer.username}</td>
+                    <td>{offer.online_or_auto}</td>
+                    <td>{offer.bank_name}</td>
+                    <td>{offer.total_amount}</td>
+                    <td>{offer.effective_max_amount}</td>
+                    <td>{offer.release_rate}</td>
+                    <td>{offer.disputed_rate}</td>
+                    <td>{offer.trade_completion_time}</td>
+                    <td>{offer.has_cancelled_trade}</td>
+                    <td>{offer.supported_deposit}</td>
+                    <td>{offer.supported_withdrawal}</td>
+                    <td>{offer.payment_method}</td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </Collapse>
         </div>
-      </Collapse>
     </div>
   );
 }
