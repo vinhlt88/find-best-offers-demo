@@ -132,8 +132,28 @@ function App() {
 
       if(effective_max_amount_enabled) {
         const effective = min([offer.effective_max_amount, Number(effective_max_amount_max_amount)]);
-        offer.effective_max_amount_score = Number(effective_max_amount_weight) *  effective / 1000000000;
+        offer.effective_max_amount_score = Number(effective_max_amount_weight) *  effective / Number(effective_max_amount_max_amount);
         enabled_fields.push("effective_max_amount_score");
+      }
+
+      if(released_rate_enabled) {
+        offer.released_rate_score = Number(released_rate_weight) *  offer.release_rate;
+        enabled_fields.push("released_rate_score");
+      }
+
+      if(least_disputed_rate_enabled) {
+        offer.least_disputed_rate_score = Number(least_disputed_rate_weight) *  offer.disputed_rate;
+        enabled_fields.push("least_disputed_rate_score");
+      }
+
+      if(completion_time_block_in_seconds_enabled) {
+        offer.completion_time_block_in_seconds_score = -1 * offer.trade_completion_time / Number(completion_time_block_in_seconds_weight);
+        enabled_fields.push("completion_time_block_in_seconds_score");
+      }
+
+      if(deprioritize_offer_has_cancelled_enabled) {
+        offer.deprioritize_offer_has_cancelled_score =  offer.has_cancelled_trade == "TRUE" ? Number(deprioritize_offer_has_cancelled_weight) : 0;
+        enabled_fields.push("deprioritize_offer_has_cancelled_score");
       }
 
       let total_score = 0;
@@ -301,7 +321,7 @@ function App() {
             )}
           </Row>
           <br />
-          <Row>
+          {/* <Row>
             {renderElementWithWeightAndExtra(
               "taker_fiat_trading_amount",
               taker_fiat_trading_amount_enabled,
@@ -312,7 +332,7 @@ function App() {
               taker_fiat_trading_amount_within_hours,
               settaker_fiat_trading_amount_within_hours,
             )}       
-          </Row>
+          </Row> */}
           <br />
         </Form>
       </Collapse>
@@ -330,12 +350,22 @@ function App() {
                       {least_total_amount_enabled && <th>least_total_amount_score</th>}
                       {trading_volume_portion_enabled && <th>trading_volume_portion_score</th>}
                       {effective_max_amount_enabled && <th>effective_max_amount_score</th>}
+                      {released_rate_enabled && <th>released_rate_score</th>}
+                      {least_disputed_rate_enabled && <th>least_disputed_rate_score</th>}
+                      {completion_time_block_in_seconds_enabled && <th>completion_time_block_in_seconds_score</th>}
+                      {deprioritize_offer_has_cancelled_enabled && <th>deprioritize_offer_has_cancelled_score</th>}
                       <th>offer_type</th>
                       <th>username</th>
                       <th>online_or_auto</th>
                       <th>bank_name</th>
                       <th>total_amount</th>
                       <th>effective_max_amount</th>
+                      <th>release_rate</th>
+                      <th>disputed_rate</th>
+                      <th>trade_completion_time</th>
+                      <th>has_cancelled_trade</th>
+                      <th>supported_deposit</th>
+                      <th>supported_withdrawal</th>
                       <th>payment_method</th>
                   </tr>
                 </thead>
@@ -349,12 +379,22 @@ function App() {
                       {least_total_amount_enabled && <td>{offer.least_total_amount_score}</td>}
                       {trading_volume_portion_enabled && <td>{offer.trading_volume_portion_score}</td>}
                       {effective_max_amount_enabled && <td>{offer.effective_max_amount_score}</td>}
+                      {released_rate_enabled && <td>{offer.released_rate_score}</td>}
+                      {least_disputed_rate_enabled && <td>{offer.least_disputed_rate_score}</td>}
+                      {completion_time_block_in_seconds_enabled && <td>{offer.completion_time_block_in_seconds_score}</td>}
+                      {deprioritize_offer_has_cancelled_enabled && <td>{offer.deprioritize_offer_has_cancelled_score}</td>}
                       <td>{offer.offer_type}</td>
                       <td>{offer.username}</td>
                       <td>{offer.online_or_auto}</td>
                       <td>{offer.bank_name}</td>
                       <td>{offer.total_amount}</td>
                       <td>{offer.effective_max_amount}</td>
+                      <td>{offer.release_rate}</td>
+                      <td>{offer.disputed_rate}</td>
+                      <td>{offer.trade_completion_time}</td>
+                      <td>{offer.has_cancelled_trade}</td>
+                      <td>{offer.supported_deposit}</td>
+                      <td>{offer.supported_withdrawal}</td>
                       <td>{offer.payment_method}</td>
                     </tr>
                   )}
@@ -376,6 +416,10 @@ function App() {
                   <th>bank_name</th>
                   <th>total_amount</th>
                   <th>effective_max_amount</th>
+                  <th>release_rate</th>
+                  <th>disputed_rate</th>
+                  <th>trade_completion_time</th>
+                  <th>has_cancelled_trade</th>
                   <th>supported_deposit</th>
                   <th>supported_withdrawal</th>
                   <th>payment_method</th>
@@ -391,6 +435,10 @@ function App() {
                   <td>{offer.bank_name}</td>
                   <td>{offer.total_amount}</td>
                   <td>{offer.effective_max_amount}</td>
+                  <td>{offer.release_rate}</td>
+                  <td>{offer.disputed_rate}</td>
+                  <td>{offer.trade_completion_time}</td>
+                  <td>{offer.has_cancelled_trade}</td>
                   <td>{offer.supported_deposit}</td>
                   <td>{offer.supported_withdrawal}</td>
                   <td>{offer.payment_method}</td>
